@@ -16,4 +16,31 @@ public class Liquidacion {
         this.retenido = retenido;
         this.devolucion = devolucion;
     }
+
+    public long getValorEstancia() {
+        return valorEstancia;
+    }
+
+    public long getPagado() {
+        return pagado;
+    }
+
+    public int getPorcentajeRetenido() {
+        return porcentajeRetenido;
+    }
+
+    public long getRetenido() {
+        return retenido;
+    }
+
+    public long getDevolucion() {
+        return devolucion;
+    }
+
+    public String resumen() {
+        return "Valor de la estancia: " + Formato.dinero(valorEstancia)
+                + "\nPagado: " + Formato.dinero(pagado)
+                + "\nSe retiene (" + porcentajeRetenido + "%): " + Formato.dinero(retenido)
+                + "\nSe devuelve: " + Formato.dinero(devolucion);
+    }
 }
