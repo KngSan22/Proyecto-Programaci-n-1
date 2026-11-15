@@ -125,4 +125,12 @@ public abstract class Reserva {
     public boolean chocaCon(LocalDate otraEntrada, LocalDate otraSalida) {
         return entrada.isBefore(otraSalida) && otraEntrada.isBefore(salida);
     }
+
+    public boolean anticipoCubierto() {
+        return folio.totalPagos() >= calcularAnticipo();
+    }
+
+    public boolean plazoVencido(LocalDateTime ahora) {
+        return estado == EstadoReserva.PENDIENTE && !ahora.isBefore(creadaEn.plusHours(24));
+    }
 }
