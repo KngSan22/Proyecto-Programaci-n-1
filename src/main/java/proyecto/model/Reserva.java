@@ -1,6 +1,6 @@
 package proyecto.model;
 
-import proyecto.exception.*;
+import uniquindio.edu.co.sga.exception.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -48,5 +48,15 @@ public abstract class Reserva {
         if (valorEstancia > 0) {
             folio.agregarCargo("Alojamiento " + apartamento.getCodigo() + " del " + entrada + " al " + salida, valorEstancia, creadaEn);
         }
+    }
+
+    // Lo que cambia según el canal
+
+    public abstract String getCanal();
+
+    public abstract long calcularAnticipo();
+
+    public long calcularComision() {
+        return 0;
     }
 }
