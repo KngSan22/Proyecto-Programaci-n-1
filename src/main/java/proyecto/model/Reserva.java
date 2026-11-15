@@ -1,6 +1,6 @@
 package proyecto.model;
 
-import uniquindio.edu.co.sga.exception.*;
+import proyecto.exception.PadreException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,5 +58,51 @@ public abstract class Reserva {
 
     public long calcularComision() {
         return 0;
+    }
+
+    // Consultas
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public Apartamento getApartamento() {
+        return apartamento;
+    }
+
+    public Huesped getTitular() {
+        return titular;
+    }
+
+    public ArrayList<Ocupante> getOcupantes() {
+        return new ArrayList<Ocupante>(ocupantes);
+    }
+
+    public LocalDate getEntrada() {
+        return entrada;
+    }
+
+    public LocalDate getSalida() {
+        return salida;
+    }
+
+    public LocalDateTime getCreadaEn() {
+        return creadaEn;
+    }
+
+    public long getValorEstancia() {
+        return valorEstancia;
+    }
+
+    public EstadoReserva getEstado() {
+        return estado;
+    }
+
+    public Folio getFolio() {
+        return folio;
+    }
+
+    public Liquidacion getLiquidacion() {
+        return liquidacion;
     }
 }
