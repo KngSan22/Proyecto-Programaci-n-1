@@ -304,8 +304,23 @@ public class Alojamiento {
         apto.definirTarifas(baja, media, alta);
     }
 
-    // Reportes
+    // Operar reservas
 
+    public ArrayList<Reserva> getReservas() {
+        return new ArrayList<Reserva>(reservas);
+    }
+
+    public ArrayList<Reserva> getReservasDe(Huesped huesped) {
+        ArrayList<Reserva> lista = new ArrayList<Reserva>();
+        for (Reserva reserva : reservas) {
+            if (reserva.getTitular() == huesped) {
+                lista.add(reserva);
+            }
+        }
+        return lista;
+    }
+
+    // Reportes
     public String reporteNovedades() {
         String texto = "NOVEDADES POR APARTAMENTO\n";
         for (Apartamento apartamento : apartamentos) {
