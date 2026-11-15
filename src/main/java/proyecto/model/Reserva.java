@@ -1,7 +1,6 @@
 package proyecto.model;
 
-import proyecto.exception.PadreException;
-import proyecto.exception.ReglaNegocioException;
+import proyecto.exception.*;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 // Reserva de un apartamento completo
 public abstract class Reserva implements Cancelable {
 
-    // Salida a las 11 am, entrada a las 3 pm y mínimo 3 horas de preparacion entre una y otra
+    // Salida a las 11 am, entrada a las 3 pm y mínimo 3 horas de preparación entre una y otra
     public static final LocalTime HORA_ENTRADA = LocalTime.of(15, 0);
     public static final int HORAS_PREPARACION = 3;
 
@@ -28,7 +27,7 @@ public abstract class Reserva implements Cancelable {
     private Folio folio = new Folio();
     private Liquidacion liquidacion = null;
 
-    // La politica de cancelación se copia aqui para que un cambio posterior no afecte esta reserva
+    // Politica de cancelación
     private int politicaDias;
     private int politicaHoras;
     private int politicaPorcentaje;
@@ -174,7 +173,11 @@ public abstract class Reserva implements Cancelable {
     public void registrarLlegada(LocalDateTime ahora) throws PadreException {
         exigirTransicion(EstadoReserva.EN_CURSO);
         if (ahora.toLocalDate().isBefore(entrada)) {
+<<<<<<< HEAD
             throw new ReglaNegocioException("Todavia no llega la fecha de entrada (" + entrada + ").");
+=======
+            throw new ReglaNegocioException("Todavía no llega la fecha de entrada (" + entrada + ").");
+>>>>>>> d227dd514acbe55a1dcae8e6afd91d92bac9f452
         }
         if (apartamento.getEstado() != EstadoApartamento.PREPARADO) {
             throw new ReglaNegocioException("El apartamento esta " + apartamento.getEstado() + ": debe estar PREPARADO para el check-in.");
@@ -186,7 +189,11 @@ public abstract class Reserva implements Cancelable {
         estado = EstadoReserva.EN_CURSO;
     }
 
+<<<<<<< HEAD
     // Check-out: la reserva pasa a Finalizada y el apartamento a Pendiente de preparacion
+=======
+    // Check-out: la reserva pasa a Finalizada y el apartamento a Pendiente de preparación
+>>>>>>> d227dd514acbe55a1dcae8e6afd91d92bac9f452
     public void registrarSalida(LocalDateTime ahora) throws PadreException {
         exigirTransicion(EstadoReserva.FINALIZADA);
         apartamento.registrarSalida(ahora);
@@ -246,6 +253,7 @@ public abstract class Reserva implements Cancelable {
         estado = EstadoReserva.CANCELADA;
         return liquidacion;
     }
+<<<<<<< HEAD
 
     // Pendiente sin confirmar en 24 horas, se cancela sola y sin penalidad
     public void cancelarPorVencimiento(LocalDateTime ahora) throws PadreException {
@@ -266,3 +274,6 @@ public abstract class Reserva implements Cancelable {
         return l;
     }
 }
+=======
+}
+>>>>>>> d227dd514acbe55a1dcae8e6afd91d92bac9f452
