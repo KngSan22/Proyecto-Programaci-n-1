@@ -1,6 +1,6 @@
 package proyecto.model;
 
-import uniquindio.edu.co.sga.exception.*;
+import proyecto.exception.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

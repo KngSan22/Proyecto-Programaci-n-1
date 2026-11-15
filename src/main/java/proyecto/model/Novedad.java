@@ -1,7 +1,6 @@
 package proyecto.model;
 
-import uniquindio.edu.co.sga.exception.DatoInvalidoException;
-import uniquindio.edu.co.sga.exception.PadreException;
+import proyecto.exception.*;
 
 import java.time.LocalDateTime;
 

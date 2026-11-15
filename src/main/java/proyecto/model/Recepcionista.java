@@ -1,6 +1,6 @@
 package proyecto.model;
 
-import uniquindio.edu.co.sga.exception.PadreException;
+import proyecto.exception.PadreException;
 public class Recepcionista extends Usuario {
 
     private String telefono;
