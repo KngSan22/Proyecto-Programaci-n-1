@@ -223,4 +223,18 @@ public abstract class Reserva {
     public Liquidacion calcularLiquidacion(LocalDateTime ahora) {
         return liquidar(porcentajeRetenido(ahora));
     }
+
+    // Deja el folio al día sin borrar nada: corrige el alojamiento, carga la penalidad y registra la devolucion
+    private void aplicarLiquidacion(Liquidacion liq, LocalDateTime ahora, String motivo) throws PadreException {
+        if (valorEstancia > 0) {
+            folio.corregirCargo(0, motivo, ahora);
+        }
+        if (liq.getRetenido() > 0) {
+            folio.agregarCargo("Penalidad (" + motivo + ", " + liq.getPorcentajeRetenido() + "%)", liq.getRetenido(), ahora);
+        }
+        if (liq.getDevolucion() > 0) {
+            folio.agregarDevolucion(liq.getDevolucion(), folio.medioDelUltimoPago(), ahora);
+        }
+        liquidacion = liq;
+    }
 }
