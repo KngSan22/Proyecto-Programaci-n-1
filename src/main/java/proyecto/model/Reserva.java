@@ -1,7 +1,6 @@
 package proyecto.model;
 
-import proyecto.exception.PadreException;
-import proyecto.exception.ReglaNegocioException;
+import proyecto.exception.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 // Reserva de un apartamento completo
 public abstract class Reserva {
 
-    // Salida a las 11 am, entrada a las 3 pm y mínimo 3 horas de preparacion entre una y otra
+    // Salida a las 11 am, entrada a las 3 pm y mínimo 3 horas de preparación entre una y otra
     public static final LocalTime HORA_ENTRADA = LocalTime.of(15, 0);
     public static final int HORAS_PREPARACION = 3;
 
@@ -27,7 +26,7 @@ public abstract class Reserva {
     private Folio folio = new Folio();
     private Liquidacion liquidacion = null;
 
-    // La politica de cancelación se copia aqui para que un cambio posterior no afecte esta reserva
+    // Politica de cancelación
     private int politicaDias;
     private int politicaHoras;
     private int politicaPorcentaje;
@@ -167,5 +166,21 @@ public abstract class Reserva {
                     + " para confirmar. Lleva pagado " + Formato.dinero(folio.totalPagos()) + ".");
         }
         estado = EstadoReserva.CONFIRMADA;
+    }
+
+    // Check-in: Confirmada, ya llego la fecha de entrada y el apartamento está Preparado
+    public void registrarLlegada(LocalDateTime ahora) throws PadreException {
+        exigirTransicion(EstadoReserva.EN_CURSO);
+        if (ahora.toLocalDate().isBefore(entrada)) {
+            throw new ReglaNegocioException("Todavía no llega la fecha de entrada (" + entrada + ").");
+        }
+        if (apartamento.getEstado() != EstadoApartamento.PREPARADO) {
+            throw new ReglaNegocioException("El apartamento esta " + apartamento.getEstado() + ": debe estar PREPARADO para el check-in.");
+        }
+        if (!apartamento.preparacionCumplida(ahora, HORAS_PREPARACION)) {
+            throw new ReglaNegocioException("Deben pasar al menos " + HORAS_PREPARACION + " horas entre la salida anterior y esta entrada.");
+        }
+        apartamento.setEstado(EstadoApartamento.OCUPADO, "");
+        estado = EstadoReserva.EN_CURSO;
     }
 }
