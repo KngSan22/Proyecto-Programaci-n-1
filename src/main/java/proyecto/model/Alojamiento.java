@@ -543,6 +543,40 @@ public class Alojamiento {
                 + "\nIngresos netos: " + Formato.dinero(ingresos - comisiones) + "\n";
     }
 
+    // Cuenta las reservas de cada canal, incluidas las canceladas y los no-show
+    public String reportePorCanal() {
+        String[] canales = {"PORTAL", "DIRECTA", "EXTERNA"};
+        String texto = "RESERVAS POR CANAL\n";
+        for (String canal : canales) {
+            int total = 0;
+            int canceladas = 0;
+            int noShow = 0;
+            for (Reserva reserva : reservas) {
+                if (reserva.getCanal().equals(canal)) {
+                    total = total + 1;
+                    if (reserva.getEstado() == EstadoReserva.CANCELADA) {
+                        canceladas = canceladas + 1;
+                    }
+                    if (reserva.getEstado() == EstadoReserva.NO_SHOW) {
+                        noShow = noShow + 1;
+                    }
+                }
+            }
+            texto += canal + ": " + total + " reservas, " + canceladas + " canceladas, " + noShow + " no-show\n";
+        }
+        return texto;
+    }
+
+    public String reporteSaldos() {
+        String texto = "SALDOS PENDIENTES\n";
+        for (Reserva reserva : reservas) {
+            if (reserva.getFolio().saldo() > 0) {
+                texto += reserva.getCodigo() + " | " + reserva.getTitular().getNombre() + " | " + reserva.getEstado() + " | " + Formato.dinero(reserva.getFolio().saldo()) + "\n";
+            }
+        }
+        return texto;
+    }
+
     public String reporteNovedades() {
         String texto = "NOVEDADES POR APARTAMENTO\n";
         for (Apartamento apartamento : apartamentos) {
