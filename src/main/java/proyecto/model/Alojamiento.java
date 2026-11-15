@@ -296,6 +296,46 @@ public class Alojamiento {
         return cotizada;
     }
 
+    // Crear reservas
+
+    // Hace las validaciones comunes y devuelve la cotización lista
+    private Cotizacion validarReserva(Huesped titular, Apartamento apto, LocalDate entrada, LocalDate salida, ArrayList<Ocupante> acompanantes, ArrayList<Ocupante> todos) throws PadreException {
+        validarFechas(entrada, salida);
+        if (entrada.isBefore(LocalDate.now())) {
+            throw new ReglaNegocioException("No se pueden crear reservas con fecha de entrada anterior a hoy.");
+        }
+        // El titular también se aloja, es el primer ocupante
+        todos.add(new Ocupante(titular.getNombre(), titular.getFechaNacimiento()));
+        todos.addAll(acompanantes);
+        Cotizacion cot = cotizar(apto, entrada, salida, todos);
+        String motivo = motivoNoDisponible(apto, entrada, salida);
+        if (motivo != null) {
+            throw new PadreException(motivo);
+        }
+        return cot;
+    }
+
+    private String nuevoCodigo() {
+        contadorReservas++;
+        return "R-" + contadorReservas;
+    }
+
+    public Reserva crearReservaPortal(Huesped titular, Apartamento apto, LocalDate entrada, LocalDate salida, ArrayList<Ocupante> acompanantes, LocalDateTime ahora) throws PadreException {
+        ArrayList<Ocupante> todos = new ArrayList<Ocupante>();
+        Cotizacion cot = validarReserva(titular, apto, entrada, salida, acompanantes, todos);
+        Reserva r = new ReservaPortal(nuevoCodigo(), apto, titular, todos, entrada, salida, ahora, cot, politicaDias, politicaHoras, politicaPorcentaje);
+        reservas.add(r);
+        return r;
+    }
+
+    public Reserva crearReservaDirecta(Huesped titular, Apartamento apto, LocalDate entrada, LocalDate salida, ArrayList<Ocupante> acompanantes, LocalDateTime ahora) throws PadreException {
+        ArrayList<Ocupante> todos = new ArrayList<Ocupante>();
+        Cotizacion cot = validarReserva(titular, apto, entrada, salida, acompanantes, todos);
+        Reserva r = new ReservaDirecta(nuevoCodigo(), apto, titular, todos, entrada, salida, ahora, cot, politicaDias, politicaHoras, politicaPorcentaje);
+        reservas.add(r);
+        return r;
+    }
+
     // Perfiles y empleados
 
     public void editarPerfil(Huesped huesped, String nombre, String telefono, String correo) throws PadreException {
