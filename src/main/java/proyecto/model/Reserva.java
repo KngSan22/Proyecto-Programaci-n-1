@@ -203,4 +203,24 @@ public abstract class Reserva {
         }
         return 100;
     }
+
+    private Liquidacion liquidar(int porcentaje) {
+        long retenido = valorEstancia * porcentaje / 100;
+        long pagado = folio.totalPagos();
+        // Lo cargado por servicios adicionales (desayuno, lavanderia) tampoco se devuelve
+        long servicios = folio.totalCargos() - valorEstancia;
+        if (servicios < 0) {
+            servicios = 0;
+        }
+        long devolucion = pagado - retenido - servicios;
+        if (devolucion < 0) {
+            devolucion = 0;
+        }
+        return new Liquidacion(valorEstancia, pagado, porcentaje, retenido, devolucion);
+    }
+
+    // Calcula sin cambiar nada (es lo que ve el huesped antes de cancelar)
+    public Liquidacion calcularLiquidacion(LocalDateTime ahora) {
+        return liquidar(porcentajeRetenido(ahora));
+    }
 }
