@@ -355,7 +355,10 @@ public class Alojamiento {
         try {
             cot = validarReserva(titular, apto, entrada, salida, acompanantes, todos);
         } catch (PadreException exception) {
-            conflictos.add("Codigo externo " + codigoExterno + " rechazado: " + exception.getMessage());
+            // Solo el choque de noches lanza PadreException directo; las demás reglas lanzan una clase hija
+            if (exception.getClass() == PadreException.class) {
+                conflictos.add("Codigo externo " + codigoExterno + " rechazado: " + exception.getMessage());
+            }
             throw exception;
         }
         Reserva reserva = new ReservaExterna(nuevoCodigo(), codigoExterno.trim(), apto, titular, todos, entrada, salida, ahora, cot,
@@ -528,10 +531,10 @@ public class Alojamiento {
         long ingresos = 0;
         long comisiones = 0;
         for (Reserva reserva : reservas) {
-            for (Movimiento p : reserva.getFolio().getPagos()) {
-                LocalDate dia = p.getFecha().toLocalDate();
+            for (Movimiento pagos : reserva.getFolio().getPagos()) {
+                LocalDate dia = pagos.getFecha().toLocalDate();
                 if (!dia.isBefore(desde) && !dia.isAfter(hasta)) {
-                    ingresos = ingresos + p.getValor();
+                    ingresos = ingresos + pagos.getValor();
                 }
             }
             if (reserva.getEstado() != EstadoReserva.CANCELADA && !reserva.getEntrada().isBefore(desde) && !reserva.getEntrada().isAfter(hasta)) {
@@ -577,19 +580,33 @@ public class Alojamiento {
         return texto;
     }
 
+    // El apartamento con más novedades sale primero
     public String reporteNovedades() {
         String texto = "NOVEDADES POR APARTAMENTO\n";
-        for (Apartamento apartamento : apartamentos) {
-            int cantidad = 0;
-            for (Novedad n : novedades) {
-                if (n.getApartamento() == apartamento) {
-                    cantidad = cantidad + 1;
+        ArrayList<Apartamento> pendientes = new ArrayList<Apartamento>(apartamentos);
+        while (pendientes.size() > 0) {
+            Apartamento mayor = pendientes.get(0);
+            for (Apartamento apartamento : pendientes) {
+                if (contarNovedades(apartamento) > contarNovedades(mayor)) {
+                    mayor = apartamento;
                 }
             }
+            pendientes.remove(mayor);
+            int cantidad = contarNovedades(mayor);
             if (cantidad > 0) {
-                texto += apartamento.getCodigo() + " " + apartamento.getNombre() + ": " + cantidad + " novedades\n";
+                texto += mayor.getCodigo() + " " + mayor.getNombre() + ": " + cantidad + " novedades\n";
             }
         }
         return texto;
+    }
+
+    private int contarNovedades(Apartamento apto) {
+        int cantidad = 0;
+        for (Novedad novedad : novedades) {
+            if (novedad.getApartamento() == apto) {
+                cantidad = cantidad + 1;
+            }
+        }
+        return cantidad;
     }
 }
