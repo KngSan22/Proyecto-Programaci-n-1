@@ -1,10 +1,6 @@
 package proyecto.model;
 
-
 import proyecto.exception.PadreException;
-
-import proyecto.exception.*;
-
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -108,5 +104,25 @@ public abstract class Reserva {
 
     public Liquidacion getLiquidacion() {
         return liquidacion;
+    }
+
+    // Activa = Pendiente, Confirmada o En curso
+    public boolean estaActiva() {
+        return estado == EstadoReserva.PENDIENTE || estado == EstadoReserva.CONFIRMADA || estado == EstadoReserva.EN_CURSO;
+    }
+
+    // Noches realmente vendidas
+    public boolean generaOcupacion() {
+        return estado == EstadoReserva.CONFIRMADA || estado == EstadoReserva.EN_CURSO || estado == EstadoReserva.FINALIZADA;
+    }
+
+    // La noche de la fecha de salida no se cobra ni se ocupa
+    public boolean ocupaNoche(LocalDate noche) {
+        return !noche.isBefore(entrada) && noche.isBefore(salida);
+    }
+
+    // Dos estancias comparten noche si una empieza antes de que termine la otra
+    public boolean chocaCon(LocalDate otraEntrada, LocalDate otraSalida) {
+        return entrada.isBefore(otraSalida) && otraEntrada.isBefore(salida);
     }
 }
