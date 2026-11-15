@@ -493,6 +493,56 @@ public class Alojamiento {
 
     // Reportes
 
+    public String reporteOcupacion(LocalDate desde, LocalDate hasta) throws PadreException {
+        if (hasta.isBefore(desde)) {
+            throw new DatoInvalidoException("El periodo no es valido.");
+        }
+        int nochesPeriodo = (int) (hasta.toEpochDay() - desde.toEpochDay()) + 1;
+        String texto = "OCUPACION POR APARTAMENTO (" + desde + " a " + hasta + ")\n";
+        for (Apartamento apartamento : getApartamentos()) {
+            int ocupadas = 0;
+            for (Reserva reserva : reservas) {
+                if (reserva.getApartamento() == apartamento && reserva.generaOcupacion()) {
+                    LocalDate noche = desde;
+                    while (!noche.isAfter(hasta)) {
+                        if (reserva.ocupaNoche(noche)) {
+                            ocupadas++;
+                        }
+                        noche = noche.plusDays(1);
+                    }
+                }
+            }
+            double porcentaje = 100.0 * ocupadas / nochesPeriodo;
+            texto += apartamento.getCodigo() + " " + apartamento.getNombre() + ": " + ocupadas + " de " + nochesPeriodo
+                    + " noches (" + String.format("%.1f", porcentaje) + "%)\n";
+        }
+        return texto;
+    }
+
+    // Ingresos = pagos recibidos en el periodo
+    // Comisiones = de las externas no canceladas con entrada en el periodo
+    public String reporteIngresos(LocalDate desde, LocalDate hasta) throws PadreException {
+        if (hasta.isBefore(desde)) {
+            throw new DatoInvalidoException("El periodo no es valido.");
+        }
+        long ingresos = 0;
+        long comisiones = 0;
+        for (Reserva reserva : reservas) {
+            for (Movimiento p : reserva.getFolio().getPagos()) {
+                LocalDate dia = p.getFecha().toLocalDate();
+                if (!dia.isBefore(desde) && !dia.isAfter(hasta)) {
+                    ingresos = ingresos + p.getValor();
+                }
+            }
+            if (reserva.getEstado() != EstadoReserva.CANCELADA && !reserva.getEntrada().isBefore(desde) && !reserva.getEntrada().isAfter(hasta)) {
+                comisiones = comisiones + reserva.calcularComision();
+            }
+        }
+        return "INGRESOS (" + desde + " a " + hasta + ")\nPagos netos recibidos: " + Formato.dinero(ingresos)
+                + "\nComisiones a plataformas: " + Formato.dinero(comisiones)
+                + "\nIngresos netos: " + Formato.dinero(ingresos - comisiones) + "\n";
+    }
+
     public String reporteNovedades() {
         String texto = "NOVEDADES POR APARTAMENTO\n";
         for (Apartamento apartamento : apartamentos) {
