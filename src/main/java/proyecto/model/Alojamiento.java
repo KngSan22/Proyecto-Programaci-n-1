@@ -337,7 +337,7 @@ public class Alojamiento {
     }
 
     // Si choca con una reserva vigente se rechaza y se anota como conflicto de canal
-    // Un mismo código externo no puede crear dos reservas
+    // Un mismo codigo externo no puede crear dos reservas
     public Reserva crearReservaExterna(String codigoExterno, Huesped titular, Apartamento apto, LocalDate entrada, LocalDate salida, ArrayList<Ocupante> acompanantes, LocalDateTime ahora) throws PadreException {
         if (codigoExterno == null || codigoExterno.trim().equals("")) {
             throw new DatoInvalidoException("El codigo externo es obligatorio.");
@@ -415,6 +415,27 @@ public class Alojamiento {
         return reserva.marcarNoShow(ahora);
     }
 
+    // Correcciones
+
+    public void corregirCargo(Reserva reserva, int posicion, String motivo, LocalDateTime ahora) throws PadreException {
+        validarCorreccion(posicion, reserva.getFolio().getCargos().size(), motivo);
+        reserva.getFolio().corregirCargo(posicion, motivo.trim(), ahora);
+    }
+
+    public void corregirPago(Reserva reserva, int posicion, String motivo, LocalDateTime ahora) throws PadreException {
+        validarCorreccion(posicion, reserva.getFolio().getPagos().size(), motivo);
+        reserva.getFolio().corregirPago(posicion, motivo.trim(), ahora);
+    }
+
+    private void validarCorreccion(int posicion, int cantidad, String motivo) throws PadreException {
+        if (motivo == null || motivo.trim().equals("")) {
+            throw new DatoInvalidoException("El motivo de la correccion es obligatorio.");
+        }
+        if (posicion < 0 || posicion >= cantidad) {
+            throw new DatoInvalidoException("No existe un movimiento con ese numero.");
+        }
+    }
+
     // Operar reservas
 
     public ArrayList<Reserva> getReservas() {
@@ -458,6 +479,16 @@ public class Alojamiento {
     public Liquidacion cancelarReserva(Reserva reserva, LocalDateTime ahora) throws PadreException {
         liberarVencidas(ahora);
         return reserva.cancelar(ahora);
+    }
+
+    public void registrarServicio(Reserva reserva, String concepto, long valor, LocalDateTime ahora) throws PadreException {
+        if (!reserva.estaActiva()) {
+            throw new ReglaNegocioException("La reserva esta " + reserva.getEstado() + " y no admite nuevos cargos.");
+        }
+        if (concepto == null || concepto.trim().equals("")) {
+            throw new DatoInvalidoException("El concepto del servicio es obligatorio.");
+        }
+        reserva.getFolio().agregarCargo(concepto.trim(), valor, ahora);
     }
 
     // Reportes
