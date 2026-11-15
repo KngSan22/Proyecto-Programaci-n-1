@@ -2,6 +2,7 @@ package proyecto.model;
 
 import proyecto.exception.*;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -189,5 +190,17 @@ public abstract class Reserva {
         exigirTransicion(EstadoReserva.FINALIZADA);
         apartamento.registrarSalida(ahora);
         estado = EstadoReserva.FINALIZADA;
+    }
+
+    // Porcentaje del valor de la estancia que se retiene al cancelar
+    public int porcentajeRetenido(LocalDateTime ahora) {
+        Duration antelacion = Duration.between(ahora, entrada.atTime(HORA_ENTRADA));
+        if (antelacion.compareTo(Duration.ofDays(politicaDias)) > 0) {
+            return 0;
+        }
+        if (antelacion.toHours() >= politicaHoras) {
+            return politicaPorcentaje;
+        }
+        return 100;
     }
 }
