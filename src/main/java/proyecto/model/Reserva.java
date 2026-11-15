@@ -1,6 +1,10 @@
 package proyecto.model;
 
+
 import proyecto.exception.PadreException;
+
+import proyecto.exception.*;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
