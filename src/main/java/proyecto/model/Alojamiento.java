@@ -2,11 +2,10 @@ package proyecto.model;
 
 import proyecto.exception.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.util.ArrayList;
 
-// Los controladores solo llaman a estos metodos.
+// Los controladores solo llaman a estos métodos.
 public class Alojamiento {
 
     private ArrayList<Apartamento> apartamentos = new ArrayList<Apartamento>();
@@ -15,12 +14,16 @@ public class Alojamiento {
     private ArrayList<Administrador> administradores = new ArrayList<Administrador>();
     private ArrayList<PeriodoTemporada> periodos = new ArrayList<PeriodoTemporada>();
     private ArrayList<Bloqueo> bloqueos = new ArrayList<Bloqueo>();
+    private ArrayList<Reserva> reservas = new ArrayList<Reserva>();
     private ArrayList<Novedad> novedades = new ArrayList<Novedad>();
+    private ArrayList<String> conflictos = new ArrayList<String>();
 
-    // Politica de cancelacion, configurada por el admin
+    // Política de cancelación, configurada por el admin
     private int politicaDias = 7;
     private int politicaHoras = 48;
     private int politicaPorcentaje = 50;
+
+    private int contadorReservas = 0;
 
     // Datos de ejemplo
     public void cargarDatosDeEjemplo() throws PadreException {
@@ -136,7 +139,11 @@ public class Alojamiento {
     }
 
     public void eliminarApartamento(Apartamento apto) throws PadreException {
-        // Pendiente (reservas): no dejar eliminar si tiene una reserva activa
+        for (Reserva reserva : reservas) {
+            if (reserva.getApartamento() == apto && reserva.estaActiva()) {
+                throw new ReglaNegocioException("El apartamento tiene la reserva activa " + reserva.getCodigo() + " y no se puede eliminar.");
+            }
+        }
         apto.eliminar();
     }
 
@@ -211,7 +218,11 @@ public class Alojamiento {
 
     public void registrarBloqueo(Apartamento apto, LocalDate desde, LocalDate hasta, String motivo) throws PadreException {
         Bloqueo nuevo = new Bloqueo(apto, desde, hasta, motivo);
-        // Pendiente (reservas): revisar que no choque con una reserva activa
+        for (Reserva reserva : reservas) {
+            if (reserva.getApartamento() == apto && reserva.estaActiva() && nuevo.chocaCon(reserva.getEntrada(), reserva.getSalida())) {
+                throw new ReglaNegocioException("El bloqueo choca con la reserva activa " + reserva.getCodigo() + ".");
+            }
+        }
         bloqueos.add(nuevo);
     }
 
@@ -232,7 +243,11 @@ public class Alojamiento {
                 return "El apartamento " + apto.getCodigo() + " esta bloqueado (" + bloqueo.getMotivo() + ") en esas fechas.";
             }
         }
-        // Pendiente (reservas): tambien revisar las reservas activas del apartamento
+        for (Reserva reserva : reservas) {
+            if (reserva.getApartamento() == apto && reserva.estaActiva() && reserva.chocaCon(entrada, salida)) {
+                return "El apartamento " + apto.getCodigo() + " ya tiene la reserva " + reserva.getCodigo() + " en esas fechas.";
+            }
+        }
         return null;
     }
 
@@ -299,7 +314,12 @@ public class Alojamiento {
     }
 
     public void modificarApartamento(Apartamento apto, String nombre, int dormitorios, int capacidad, String caracteristicas, long baja, long media, long alta) throws PadreException {
-        // Pendiente (reservas): no bajar la capacidad por debajo de los ocupantes de una reserva activa
+        // No se puede bajar la capacidad por debajo de los ocupantes de una reserva activa
+        for (Reserva reserva : reservas) {
+            if (reserva.getApartamento() == apto && reserva.estaActiva() && reserva.getOcupantes().size() > capacidad) {
+                throw new ReglaNegocioException("La reserva " + reserva.getCodigo() + " tiene mas personas que la nueva capacidad.");
+            }
+        }
         apto.modificar(nombre, dormitorios, capacidad, caracteristicas);
         apto.definirTarifas(baja, media, alta);
     }
@@ -321,6 +341,7 @@ public class Alojamiento {
     }
 
     // Reportes
+
     public String reporteNovedades() {
         String texto = "NOVEDADES POR APARTAMENTO\n";
         for (Apartamento apartamento : apartamentos) {

@@ -1,11 +1,8 @@
 package proyecto.model;
 
-import uniquindio.edu.co.sga.exception.*;
+import proyecto.exception.*;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.ArrayList;
 
 // Reserva de un apartamento completo
@@ -27,7 +24,7 @@ public abstract class Reserva implements Cancelable {
     private Folio folio = new Folio();
     private Liquidacion liquidacion = null;
 
-    // La politica de cancelación se copia aqui para que un cambio posterior no afecte esta reserva
+    // La politica de cancelación se copia aquí para que un cambio posterior no afecte esta reserva
     private int politicaDias;
     private int politicaHoras;
     private int politicaPorcentaje;
