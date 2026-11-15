@@ -3,13 +3,14 @@ package proyecto.model;
 import proyecto.exception.PadreException;
 import proyecto.exception.ReglaNegocioException;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
 // Reserva de un apartamento completo
-public abstract class Reserva {
+public abstract class Reserva implements Cancelable {
 
     // Salida a las 11 am, entrada a las 3 pm y mínimo 3 horas de preparacion entre una y otra
     public static final LocalTime HORA_ENTRADA = LocalTime.of(15, 0);
@@ -167,5 +168,101 @@ public abstract class Reserva {
                     + " para confirmar. Lleva pagado " + Formato.dinero(folio.totalPagos()) + ".");
         }
         estado = EstadoReserva.CONFIRMADA;
+    }
+
+    // Check-in: Confirmada, ya llego la fecha de entrada y el apartamento está Preparado
+    public void registrarLlegada(LocalDateTime ahora) throws PadreException {
+        exigirTransicion(EstadoReserva.EN_CURSO);
+        if (ahora.toLocalDate().isBefore(entrada)) {
+            throw new ReglaNegocioException("Todavia no llega la fecha de entrada (" + entrada + ").");
+        }
+        if (apartamento.getEstado() != EstadoApartamento.PREPARADO) {
+            throw new ReglaNegocioException("El apartamento esta " + apartamento.getEstado() + ": debe estar PREPARADO para el check-in.");
+        }
+        if (!apartamento.preparacionCumplida(ahora, HORAS_PREPARACION)) {
+            throw new ReglaNegocioException("Deben pasar al menos " + HORAS_PREPARACION + " horas entre la salida anterior y esta entrada.");
+        }
+        apartamento.setEstado(EstadoApartamento.OCUPADO, "");
+        estado = EstadoReserva.EN_CURSO;
+    }
+
+    // Check-out: la reserva pasa a Finalizada y el apartamento a Pendiente de preparacion
+    public void registrarSalida(LocalDateTime ahora) throws PadreException {
+        exigirTransicion(EstadoReserva.FINALIZADA);
+        apartamento.registrarSalida(ahora);
+        estado = EstadoReserva.FINALIZADA;
+    }
+
+    // Porcentaje del valor de la estancia que se retiene al cancelar
+    public int porcentajeRetenido(LocalDateTime ahora) {
+        Duration antelacion = Duration.between(ahora, entrada.atTime(HORA_ENTRADA));
+        if (antelacion.compareTo(Duration.ofDays(politicaDias)) > 0) {
+            return 0;
+        }
+        if (antelacion.toHours() >= politicaHoras) {
+            return politicaPorcentaje;
+        }
+        return 100;
+    }
+
+    private Liquidacion liquidar(int porcentaje) {
+        long retenido = valorEstancia * porcentaje / 100;
+        long pagado = folio.totalPagos();
+        // Lo cargado por servicios adicionales (desayuno, lavanderia) tampoco se devuelve
+        long servicios = folio.totalCargos() - valorEstancia;
+        if (servicios < 0) {
+            servicios = 0;
+        }
+        long devolucion = pagado - retenido - servicios;
+        if (devolucion < 0) {
+            devolucion = 0;
+        }
+        return new Liquidacion(valorEstancia, pagado, porcentaje, retenido, devolucion);
+    }
+
+    // Calcula sin cambiar nada (es lo que ve el huesped antes de cancelar)
+    public Liquidacion calcularLiquidacion(LocalDateTime ahora) {
+        return liquidar(porcentajeRetenido(ahora));
+    }
+
+    // Deja el folio al día sin borrar nada: corrige el alojamiento, carga la penalidad y registra la devolucion
+    private void aplicarLiquidacion(Liquidacion liq, LocalDateTime ahora, String motivo) throws PadreException {
+        if (valorEstancia > 0) {
+            folio.corregirCargo(0, motivo, ahora);
+        }
+        if (liq.getRetenido() > 0) {
+            folio.agregarCargo("Penalidad (" + motivo + ", " + liq.getPorcentajeRetenido() + "%)", liq.getRetenido(), ahora);
+        }
+        if (liq.getDevolucion() > 0) {
+            folio.agregarDevolucion(liq.getDevolucion(), folio.medioDelUltimoPago(), ahora);
+        }
+        liquidacion = liq;
+    }
+
+    public Liquidacion cancelar(LocalDateTime ahora) throws PadreException {
+        exigirTransicion(EstadoReserva.CANCELADA);
+        Liquidacion liquidacion = calcularLiquidacion(ahora);
+        aplicarLiquidacion(liquidacion, ahora, "cancelacion");
+        estado = EstadoReserva.CANCELADA;
+        return liquidacion;
+    }
+
+    // Pendiente sin confirmar en 24 horas, se cancela sola y sin penalidad
+    public void cancelarPorVencimiento(LocalDateTime ahora) throws PadreException {
+        exigirTransicion(EstadoReserva.CANCELADA);
+        aplicarLiquidacion(liquidar(0), ahora, "vencimiento de 24 horas");
+        estado = EstadoReserva.CANCELADA;
+    }
+
+    // No-show, el titular no llego antes de las 10:00 p. m. del dia de entrada, se retiene el 100%
+    public Liquidacion marcarNoShow(LocalDateTime ahora) throws PadreException {
+        exigirTransicion(EstadoReserva.NO_SHOW);
+        if (ahora.isBefore(entrada.atTime(LocalTime.of(22, 0)))) {
+            throw new ReglaNegocioException("Solo se puede declarar no-show despues de las 10:00 p. m. del dia de entrada (" + entrada + ").");
+        }
+        Liquidacion l = liquidar(100);
+        aplicarLiquidacion(l, ahora, "no-show");
+        estado = EstadoReserva.NO_SHOW;
+        return l;
     }
 }
