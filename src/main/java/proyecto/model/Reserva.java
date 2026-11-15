@@ -183,4 +183,11 @@ public abstract class Reserva {
         apartamento.setEstado(EstadoApartamento.OCUPADO, "");
         estado = EstadoReserva.EN_CURSO;
     }
+
+    // Check-out: la reserva pasa a Finalizada y el apartamento a Pendiente de preparación
+    public void registrarSalida(LocalDateTime ahora) throws PadreException {
+        exigirTransicion(EstadoReserva.FINALIZADA);
+        apartamento.registrarSalida(ahora);
+        estado = EstadoReserva.FINALIZADA;
+    }
 }
