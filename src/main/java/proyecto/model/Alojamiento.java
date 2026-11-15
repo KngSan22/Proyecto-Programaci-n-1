@@ -336,6 +336,38 @@ public class Alojamiento {
         return r;
     }
 
+    // Si choca con una reserva vigente se rechaza y se anota como conflicto de canal
+    // Un mismo código externo no puede crear dos reservas
+    public Reserva crearReservaExterna(String codigoExterno, Huesped titular, Apartamento apto, LocalDate entrada, LocalDate salida, ArrayList<Ocupante> acompanantes, LocalDateTime ahora) throws PadreException {
+        if (codigoExterno == null || codigoExterno.trim().equals("")) {
+            throw new DatoInvalidoException("El codigo externo es obligatorio.");
+        }
+        for (Reserva reserva : reservas) {
+            if (reserva instanceof ReservaExterna) {
+                ReservaExterna externa = (ReservaExterna) reserva;
+                if (externa.getCodigoExterno().equalsIgnoreCase(codigoExterno.trim())) {
+                    throw new ReglaNegocioException("El codigo externo " + codigoExterno + " ya creo la reserva " + reserva.getCodigo() + ".");
+                }
+            }
+        }
+        ArrayList<Ocupante> todos = new ArrayList<Ocupante>();
+        Cotizacion cot;
+        try {
+            cot = validarReserva(titular, apto, entrada, salida, acompanantes, todos);
+        } catch (PadreException exception) {
+            conflictos.add("Codigo externo " + codigoExterno + " rechazado: " + exception.getMessage());
+            throw exception;
+        }
+        Reserva reserva = new ReservaExterna(nuevoCodigo(), codigoExterno.trim(), apto, titular, todos, entrada, salida, ahora, cot,
+                politicaDias, politicaHoras, politicaPorcentaje);
+        reservas.add(reserva);
+        return reserva;
+    }
+
+    public ArrayList<String> getConflictos() {
+        return new ArrayList<String>(conflictos);
+    }
+
     // Perfiles y empleados
 
     public void editarPerfil(Huesped huesped, String nombre, String telefono, String correo) throws PadreException {
