@@ -1,6 +1,7 @@
 package proyecto.model;
 
 import proyecto.exception.PadreException;
+import proyecto.exception.ReglaNegocioException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -132,5 +133,30 @@ public abstract class Reserva {
 
     public boolean plazoVencido(LocalDateTime ahora) {
         return estado == EstadoReserva.PENDIENTE && !ahora.isBefore(creadaEn.plusHours(24));
+    }
+
+    // Cambios de estado
+    // Revisa la tabla de estados permitidos
+    private boolean transicionPermitida(EstadoReserva nuevo) {
+        if (estado == EstadoReserva.PENDIENTE) {
+            return nuevo == EstadoReserva.CONFIRMADA || nuevo == EstadoReserva.CANCELADA;
+        }
+        if (estado == EstadoReserva.CONFIRMADA) {
+            return nuevo == EstadoReserva.EN_CURSO || nuevo == EstadoReserva.CANCELADA || nuevo == EstadoReserva.NO_SHOW;
+        }
+        if (estado == EstadoReserva.EN_CURSO) {
+            return nuevo == EstadoReserva.FINALIZADA;
+        }
+        return false; // Finalizada, Cancelada y No-show
+    }
+
+    private void exigirTransicion(EstadoReserva nuevo) throws PadreException {
+        if (!transicionPermitida(nuevo)) {
+            throw new ReglaNegocioException("La reserva " + codigo + " no puede pasar de " + estado + " a " + nuevo + ".");
+        }
+    }
+
+    public boolean puedeCancelarse() {
+        return transicionPermitida(EstadoReserva.CANCELADA);
     }
 }
