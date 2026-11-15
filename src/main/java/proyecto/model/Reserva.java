@@ -237,4 +237,12 @@ public abstract class Reserva {
         }
         liquidacion = liq;
     }
+
+    public Liquidacion cancelar(LocalDateTime ahora) throws PadreException {
+        exigirTransicion(EstadoReserva.CANCELADA);
+        Liquidacion liquidacion = calcularLiquidacion(ahora);
+        aplicarLiquidacion(liquidacion, ahora, "cancelacion");
+        estado = EstadoReserva.CANCELADA;
+        return liquidacion;
+    }
 }
