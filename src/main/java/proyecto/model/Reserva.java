@@ -159,4 +159,13 @@ public abstract class Reserva {
     public boolean puedeCancelarse() {
         return transicionPermitida(EstadoReserva.CANCELADA);
     }
+
+    public void confirmar() throws PadreException {
+        exigirTransicion(EstadoReserva.CONFIRMADA);
+        if (!anticipoCubierto()) {
+            throw new ReglaNegocioException("Falta el anticipo de " + Formato.dinero(calcularAnticipo())
+                    + " para confirmar. Lleva pagado " + Formato.dinero(folio.totalPagos()) + ".");
+        }
+        estado = EstadoReserva.CONFIRMADA;
+    }
 }
