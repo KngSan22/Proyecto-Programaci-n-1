@@ -396,6 +396,25 @@ public class Alojamiento {
         apto.definirTarifas(baja, media, alta);
     }
 
+    // Ciclo de vida de la reserva
+
+    public void confirmarReserva(Reserva reserva, LocalDateTime ahora) throws PadreException {
+        liberarVencidas(ahora);
+        reserva.confirmar();
+    }
+
+    public void registrarLlegada(Reserva reserva, LocalDateTime ahora) throws PadreException {
+        reserva.registrarLlegada(ahora);
+    }
+
+    public void registrarSalida(Reserva reserva, LocalDateTime ahora) throws PadreException {
+        reserva.registrarSalida(ahora);
+    }
+
+    public Liquidacion declararNoShow(Reserva reserva, LocalDateTime ahora) throws PadreException {
+        return reserva.marcarNoShow(ahora);
+    }
+
     // Operar reservas
 
     public ArrayList<Reserva> getReservas() {
@@ -410,6 +429,35 @@ public class Alojamiento {
             }
         }
         return lista;
+    }
+
+    // Cancela las reservas pendientes que llevan 24 horas sin confirmarse
+    public int liberarVencidas(LocalDateTime ahora) throws PadreException {
+        int cantidad = 0;
+        for (Reserva reserva : reservas) {
+            if (reserva.plazoVencido(ahora)) {
+                reserva.cancelarPorVencimiento(ahora);
+                cantidad++;
+            }
+        }
+        return cantidad;
+    }
+
+    // Pago o abono, si es del Portal y ya cubre el anticipo, la reserva se confirma sola.
+    public void registrarPago(Reserva reserva, long monto, MedioPago medio, LocalDateTime ahora) throws PadreException {
+        liberarVencidas(ahora);
+        if (monto > reserva.getFolio().saldo()) {
+            throw new ReglaNegocioException("El pago supera el saldo pendiente (" + Formato.dinero(reserva.getFolio().saldo()) + ").");
+        }
+        reserva.getFolio().agregarPago(monto, medio, ahora);
+        if (reserva instanceof ReservaPortal && reserva.getEstado() == EstadoReserva.PENDIENTE && reserva.anticipoCubierto()) {
+            reserva.confirmar();
+        }
+    }
+
+    public Liquidacion cancelarReserva(Reserva reserva, LocalDateTime ahora) throws PadreException {
+        liberarVencidas(ahora);
+        return reserva.cancelar(ahora);
     }
 
     // Reportes
