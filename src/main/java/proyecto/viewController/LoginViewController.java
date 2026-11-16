@@ -26,7 +26,7 @@ public class LoginViewController {
             Usuario u = modelo.iniciarSesion(txtUsuario.getText().trim(), txtClave.getText());
             SgaApplication.setUsuarioActual(u);
             // Segun el rol se muestra una pantalla distinta
-            if (u.getRol().equals("HUÉSPED")) {
+            if (u.getRol().equals("HUESPED")) {
                 SgaApplication.mostrarPantalla("huesped-view.fxml", 950, 700);
             } else if (u.getRol().equals("RECEPCIONISTA")) {
                 SgaApplication.mostrarPantalla("recepcion-view.fxml", 1000, 700);
