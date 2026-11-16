@@ -1,8 +1,9 @@
-module org.example.proyecto {
+module proyecto {
     requires javafx.controls;
     requires javafx.fxml;
 
-
-    opens org.example.proyecto to javafx.fxml;
-    exports org.example.proyecto;
+    opens proyecto to javafx.fxml;
+    exports proyecto;
+    exports proyecto.model;
+    exports proyecto.exception;
 }
