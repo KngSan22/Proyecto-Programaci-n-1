@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="proyecto.viewController.LoginViewController">
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+            <Tab text="Ingresar">
+                <content>
+                    <ScrollPane fitToWidth="true">
+                        <content>
+                            <VBox spacing="8">
+                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                                <Label text="SGA - Aparta-Suites UQ (Salento, Quindio)"/>
+                        <HBox spacing="8"><Label text="Usuario" minWidth="170"/><TextField fx:id="txtUsuario"/></HBox>
+                        <HBox spacing="8"><Label text="Contrasena" minWidth="170"/><PasswordField fx:id="txtClave"/></HBox>
+                        <HBox spacing="8"><Button text="Ingresar" onAction="#onIngresar"/></HBox>
+                        <Label text="Usuarios de prueba: admin/admin123, recepcion/recep123, carlos/carlos123"/>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </content>
+            </Tab>
+            <Tab text="Soy huesped nuevo">
+                <content>
+                    <ScrollPane fitToWidth="true">
+                        <content>
+                            <VBox spacing="8">
+                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                                <HBox spacing="8"><Label text="Nombre" minWidth="170"/><TextField fx:id="txtNombre"/></HBox>
+                        <HBox spacing="8"><Label text="Documento" minWidth="170"/><TextField fx:id="txtDocumento"/></HBox>
+                        <HBox spacing="8"><Label text="Nacimiento" minWidth="170"/><TextField fx:id="txtNacimiento" promptText="aaaa-mm-dd"/></HBox>
+                        <HBox spacing="8"><Label text="Telefono" minWidth="170"/><TextField fx:id="txtTelefono"/></HBox>
+                        <HBox spacing="8"><Label text="Correo" minWidth="170"/><TextField fx:id="txtCorreo"/></HBox>
+                        <HBox spacing="8"><Label text="Usuario" minWidth="170"/><TextField fx:id="txtNuevoUsuario"/></HBox>
+                        <HBox spacing="8"><Label text="Contrasena" minWidth="170"/><PasswordField fx:id="txtNuevaClave"/></HBox>
+                        <HBox spacing="8"><Button text="Registrarme" onAction="#onRegistrar"/></HBox>
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </content>
+            </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>
