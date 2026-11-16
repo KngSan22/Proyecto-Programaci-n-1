@@ -26,7 +26,7 @@ class UsuariosTest {
         aloj.cargarDatosDeEjemplo();
         carlos = aloj.buscarHuesped("1049258249");
         ap101 = aloj.getApartamentos().get(0);
-        // Fechas lejanas (año 2100) para que siempre sean temporada baja y estén en el futuro
+        // Fechas lejanas para que siempre sean temporada baja y estén en el futuro
         entrada = LocalDate.of(2100, 3, 10);
         salida = entrada.plusDays(3);
         ahora = LocalDateTime.now();
