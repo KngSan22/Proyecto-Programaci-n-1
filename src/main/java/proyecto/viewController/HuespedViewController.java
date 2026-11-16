@@ -3,8 +3,7 @@ package proyecto.viewController;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import proyecto.SgaApplication;
-import proyecto.exception.PadreException;
-import proyecto.exception.ReglaNegocioException;
+import proyecto.exception.*;
 import proyecto.model.*;
 
 import java.time.LocalDateTime;
@@ -103,9 +102,9 @@ public class HuespedViewController {
     @FXML
     private void onCotizar() {
         try {
-            Cotizacion c = modelo.cotizar(apartamentoElegido(), Util.fecha(txtEntrada.getText()),
+            Cotizacion cotizar = modelo.cotizar(apartamentoElegido(), Util.fecha(txtEntrada.getText()),
                     Util.fecha(txtSalida.getText()), todosLosOcupantes());
-            txtCotizacion.setText(c.resumen() + "\nAnticipo del 30%: " + Formato.dinero(c.getTotal() * 30 / 100));
+            txtCotizacion.setText(cotizar.resumen() + "\nAnticipo del 30%: " + Formato.dinero(cotizar.getTotal() * 30 / 100));
         } catch (Exception ex) {
             Util.error(ex);
         }
@@ -114,10 +113,10 @@ public class HuespedViewController {
     @FXML
     private void onReservar() {
         try {
-            Reserva r = modelo.crearReservaPortal(huesped, apartamentoElegido(), Util.fecha(txtEntrada.getText()),
+            Reserva reserva = modelo.crearReservaPortal(huesped, apartamentoElegido(), Util.fecha(txtEntrada.getText()),
                     Util.fecha(txtSalida.getText()), Util.ocupantes(txtAcompanantes.getText()), LocalDateTime.now());
-            Util.mensaje("Reserva " + r.getCodigo() + " creada. Queda PENDIENTE: pague el anticipo de "
-                    + Formato.dinero(r.calcularAnticipo()) + " en las proximas 24 horas desde -Mis reservas-");
+            Util.mensaje("Reserva " + reserva.getCodigo() + " creada. Queda PENDIENTE: pague el anticipo de "
+                    + Formato.dinero(reserva.calcularAnticipo()) + " en las proximas 24 horas desde -Mis reservas-");
             onActualizar();
         } catch (Exception ex) {
             Util.error(ex);
@@ -135,26 +134,26 @@ public class HuespedViewController {
     }
 
     private Reserva reservaElegida() throws PadreException {
-        Reserva r = lstReservas.getSelectionModel().getSelectedItem();
-        if (r == null) {
+        Reserva reserva = lstReservas.getSelectionModel().getSelectedItem();
+        if (reserva == null) {
             throw new ReglaNegocioException("Seleccione una reserva de la lista.");
         }
-        return r;
+        return reserva;
     }
 
     @FXML
     private void onVerFolio() {
         try {
-            Reserva r = reservaElegida();
+            Reserva reserva = reservaElegida();
             String texto = "CARGOS:\n";
-            for (Movimiento m : r.getFolio().getCargos()) {
-                texto += m + "\n";
+            for (Movimiento movimiento : reserva.getFolio().getCargos()) {
+                texto += movimiento + "\n";
             }
-            texto = texto + "\nPAGOS:\n";
-            for (Movimiento m : r.getFolio().getPagos()) {
-                texto += m + "\n";
+            texto += "\nPAGOS:\n";
+            for (Movimiento movimiento : reserva.getFolio().getPagos()) {
+                texto += movimiento + "\n";
             }
-            texto += "\nSALDO: " + Formato.dinero(r.getFolio().saldo());
+            texto += "\nSALDO: " + Formato.dinero(reserva.getFolio().saldo());
             txtDetalle.setText(texto);
         } catch (Exception ex) {
             Util.error(ex);

@@ -60,7 +60,6 @@ public class AdminViewController {
         lblBienvenida.setText("Administrador: " + SgaApplication.getUsuarioActual().getNombre());
         cmbTemporada.getItems().setAll(Temporada.MEDIA, Temporada.ALTA);
         cmbTemporada.setValue(Temporada.ALTA);
-        // Al elegir un apartamento de la lista se llenan los campos para poder modificarlo
         lstApartamentos.getSelectionModel().selectedItemProperty().addListener((obs, viejo, nuevo) -> llenarCampos(nuevo));
         actualizarTodo();
     }
@@ -86,7 +85,7 @@ public class AdminViewController {
         txtPorcentaje.setText("" + modelo.getPoliticaPorcentaje());
     }
 
-    // ---------- Recepcionistas ----------
+    // Recepcionistas
 
     @FXML
     private void onContratar() {
@@ -100,11 +99,11 @@ public class AdminViewController {
     }
 
     private Recepcionista recepcionistaElegido() throws PadreException {
-        Recepcionista r = lstRecepcionistas.getSelectionModel().getSelectedItem();
-        if (r == null) {
+        Recepcionista recepcionista = lstRecepcionistas.getSelectionModel().getSelectedItem();
+        if (recepcionista == null) {
             throw new ReglaNegocioException("Seleccione un recepcionista de la lista.");
         }
-        return r;
+        return recepcionista;
     }
 
     @FXML
@@ -129,18 +128,18 @@ public class AdminViewController {
 
     // Apartamentos
 
-    private void llenarCampos(Apartamento a) {
-        if (a == null) {
+    private void llenarCampos(Apartamento apartamento) {
+        if (apartamento == null) {
             return;
         }
-        txtCodigo.setText(a.getCodigo());
-        txtNombre.setText(a.getNombre());
-        txtDormitorios.setText("" + a.getDormitorios());
-        txtCapacidad.setText("" + a.getCapacidad());
-        txtCaracteristicas.setText(a.getCaracteristicas());
-        txtTarifaBaja.setText("" + a.tarifaDe(Temporada.BAJA));
-        txtTarifaMedia.setText("" + a.tarifaDe(Temporada.MEDIA));
-        txtTarifaAlta.setText("" + a.tarifaDe(Temporada.ALTA));
+        txtCodigo.setText(apartamento.getCodigo());
+        txtNombre.setText(apartamento.getNombre());
+        txtDormitorios.setText("" + apartamento.getDormitorios());
+        txtCapacidad.setText("" + apartamento.getCapacidad());
+        txtCaracteristicas.setText(apartamento.getCaracteristicas());
+        txtTarifaBaja.setText("" + apartamento.tarifaDe(Temporada.BAJA));
+        txtTarifaMedia.setText("" + apartamento.tarifaDe(Temporada.MEDIA));
+        txtTarifaAlta.setText("" + apartamento.tarifaDe(Temporada.ALTA));
     }
 
     @FXML
@@ -156,11 +155,11 @@ public class AdminViewController {
     }
 
     private Apartamento apartamentoElegido() throws PadreException {
-        Apartamento a = lstApartamentos.getSelectionModel().getSelectedItem();
-        if (a == null) {
+        Apartamento apartamento = lstApartamentos.getSelectionModel().getSelectedItem();
+        if (apartamento == null) {
             throw new ReglaNegocioException("Seleccione un apartamento de la lista.");
         }
-        return a;
+        return apartamento;
     }
 
     @FXML
@@ -185,7 +184,7 @@ public class AdminViewController {
         }
     }
 
-    //Temporadas y política
+    // Temporadas y política
     @FXML
     private void onAgregarPeriodo() {
         try {
@@ -198,9 +197,9 @@ public class AdminViewController {
 
     @FXML
     private void onEliminarPeriodo() {
-        PeriodoTemporada p = lstPeriodos.getSelectionModel().getSelectedItem();
-        if (p != null) {
-            modelo.eliminarPeriodo(p);
+        PeriodoTemporada periodo = lstPeriodos.getSelectionModel().getSelectedItem();
+        if (periodo != null) {
+            modelo.eliminarPeriodo(periodo);
             actualizarTodo();
         }
     }
@@ -216,16 +215,16 @@ public class AdminViewController {
         }
     }
 
-    // ---------- Bloqueos ----------
+    // Bloqueos
 
     @FXML
     private void onBloquear() {
         try {
-            Apartamento a = cmbApartamento.getValue();
-            if (a == null) {
+            Apartamento apartamento = cmbApartamento.getValue();
+            if (apartamento == null) {
                 throw new ReglaNegocioException("Seleccione un apartamento.");
             }
-            modelo.registrarBloqueo(a, Util.fecha(txtBloqueoDesde.getText()), Util.fecha(txtBloqueoHasta.getText()), txtBloqueoMotivo.getText());
+            modelo.registrarBloqueo(apartamento, Util.fecha(txtBloqueoDesde.getText()), Util.fecha(txtBloqueoHasta.getText()), txtBloqueoMotivo.getText());
             actualizarTodo();
         } catch (Exception ex) {
             Util.error(ex);
@@ -234,9 +233,9 @@ public class AdminViewController {
 
     @FXML
     private void onEliminarBloqueo() {
-        Bloqueo b = lstBloqueos.getSelectionModel().getSelectedItem();
-        if (b != null) {
-            modelo.eliminarBloqueo(b);
+        Bloqueo bloq = lstBloqueos.getSelectionModel().getSelectedItem();
+        if (bloq != null) {
+            modelo.eliminarBloqueo(bloq);
             actualizarTodo();
         }
     }
