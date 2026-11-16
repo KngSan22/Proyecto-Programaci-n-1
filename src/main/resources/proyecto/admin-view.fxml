@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="proyecto.viewController.AdminViewController">
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="proyecto.viewController.AdminViewController">
     <top>
         <HBox spacing="12" style="-fx-background-color: #dddddd;">
-            <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-            <Label fx:id="lblBienvenida"/>
-            <Button text="Cerrar sesion" onAction="#onSalir"/>
+            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+            <Label fx:id="lblBienvenida" />
+            <Button onAction="#onSalir" prefHeight="25.0" prefWidth="450.0" text="Cerrar sesion" />
         </HBox>
     </top>
     <center>
@@ -21,15 +31,15 @@
                     <ScrollPane fitToWidth="true">
                         <content>
                             <VBox spacing="8">
-                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                                <ListView fx:id="lstRecepcionistas" prefHeight="150"/>
-                        <HBox spacing="8"><Label text="Nombre" minWidth="170"/><TextField fx:id="txtRNombre"/></HBox>
-                        <HBox spacing="8"><Label text="Documento" minWidth="170"/><TextField fx:id="txtRDocumento"/></HBox>
-                        <HBox spacing="8"><Label text="Telefono" minWidth="170"/><TextField fx:id="txtRTelefono"/></HBox>
-                        <HBox spacing="8"><Label text="Correo" minWidth="170"/><TextField fx:id="txtRCorreo"/></HBox>
-                        <HBox spacing="8"><Label text="Usuario" minWidth="170"/><TextField fx:id="txtRUsuario"/></HBox>
-                        <HBox spacing="8"><Label text="Contrasena" minWidth="170"/><PasswordField fx:id="txtRClave"/></HBox>
-                        <HBox spacing="8"><Button text="Contratar" onAction="#onContratar"/><Button text="Editar nombre, telefono y correo" onAction="#onEditarRecepcionista"/><Button text="Desvincular" onAction="#onDesvincular"/></HBox>
+                                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                                <ListView fx:id="lstRecepcionistas" prefHeight="150" />
+                        <HBox spacing="8"><Label minWidth="170" text="Nombre" /><TextField fx:id="txtRNombre" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Documento" /><TextField fx:id="txtRDocumento" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Telefono" /><TextField fx:id="txtRTelefono" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Correo" /><TextField fx:id="txtRCorreo" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Usuario" /><TextField fx:id="txtRUsuario" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Contrasena" /><PasswordField fx:id="txtRClave" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onContratar" text="Contratar" /><Button onAction="#onEditarRecepcionista" text="Editar nombre, telefono y correo" /><Button onAction="#onDesvincular" text="Desvincular" /></HBox>
                             </VBox>
                         </content>
                     </ScrollPane>
@@ -40,17 +50,17 @@
                     <ScrollPane fitToWidth="true">
                         <content>
                             <VBox spacing="8">
-                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                                <ListView fx:id="lstApartamentos" prefHeight="150"/>
-                        <HBox spacing="8"><Label text="Codigo" minWidth="170"/><TextField fx:id="txtCodigo"/></HBox>
-                        <HBox spacing="8"><Label text="Nombre" minWidth="170"/><TextField fx:id="txtNombre"/></HBox>
-                        <HBox spacing="8"><Label text="Dormitorios" minWidth="170"/><TextField fx:id="txtDormitorios"/></HBox>
-                        <HBox spacing="8"><Label text="Capacidad" minWidth="170"/><TextField fx:id="txtCapacidad"/></HBox>
-                        <HBox spacing="8"><Label text="Caracteristicas" minWidth="170"/><TextField fx:id="txtCaracteristicas"/></HBox>
-                        <HBox spacing="8"><Label text="Tarifa baja" minWidth="170"/><TextField fx:id="txtTarifaBaja"/></HBox>
-                        <HBox spacing="8"><Label text="Tarifa media" minWidth="170"/><TextField fx:id="txtTarifaMedia"/></HBox>
-                        <HBox spacing="8"><Label text="Tarifa alta" minWidth="170"/><TextField fx:id="txtTarifaAlta"/></HBox>
-                        <HBox spacing="8"><Button text="Crear" onAction="#onCrearApartamento"/><Button text="Modificar el seleccionado" onAction="#onModificarApartamento"/><Button text="Eliminar el seleccionado" onAction="#onEliminarApartamento"/></HBox>
+                                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                                <ListView fx:id="lstApartamentos" prefHeight="150" />
+                        <HBox spacing="8"><Label minWidth="170" text="Codigo" /><TextField fx:id="txtCodigo" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Nombre" /><TextField fx:id="txtNombre" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Dormitorios" /><TextField fx:id="txtDormitorios" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Capacidad" /><TextField fx:id="txtCapacidad" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Caracteristicas" /><TextField fx:id="txtCaracteristicas" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Tarifa baja" /><TextField fx:id="txtTarifaBaja" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Tarifa media" /><TextField fx:id="txtTarifaMedia" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Tarifa alta" /><TextField fx:id="txtTarifaAlta" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onCrearApartamento" text="Crear" /><Button onAction="#onModificarApartamento" text="Modificar el seleccionado" /><Button onAction="#onEliminarApartamento" text="Eliminar el seleccionado" /></HBox>
                             </VBox>
                         </content>
                     </ScrollPane>
@@ -61,18 +71,18 @@
                     <ScrollPane fitToWidth="true">
                         <content>
                             <VBox spacing="8">
-                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                                <HBox spacing="8"><Label text="Temporada" minWidth="170"/><ComboBox fx:id="cmbTemporada"/></HBox>
-                        <HBox spacing="8"><Label text="Desde" minWidth="170"/><TextField fx:id="txtPeriodoDesde" promptText="aaaa-mm-dd"/></HBox>
-                        <HBox spacing="8"><Label text="Hasta" minWidth="170"/><TextField fx:id="txtPeriodoHasta" promptText="aaaa-mm-dd"/></HBox>
-                        <HBox spacing="8"><Button text="Agregar periodo" onAction="#onAgregarPeriodo"/></HBox>
-                        <ListView fx:id="lstPeriodos" prefHeight="120"/>
-                        <HBox spacing="8"><Button text="Eliminar periodo" onAction="#onEliminarPeriodo"/></HBox>
-                        <Label text="POLITICA DE CANCELACION"/>
-                        <HBox spacing="8"><Label text="Dias para devolucion total (mas de)" minWidth="260"/><TextField fx:id="txtDias"/></HBox>
-                        <HBox spacing="8"><Label text="Horas minimas para retencion parcial" minWidth="260"/><TextField fx:id="txtHoras"/></HBox>
-                        <HBox spacing="8"><Label text="Porcentaje retenido en el tramo parcial" minWidth="260"/><TextField fx:id="txtPorcentaje"/></HBox>
-                        <HBox spacing="8"><Button text="Guardar politica" onAction="#onGuardarPolitica"/></HBox>
+                                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                                <HBox spacing="8"><Label minWidth="170" text="Temporada" /><ComboBox fx:id="cmbTemporada" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Desde" /><TextField fx:id="txtPeriodoDesde" promptText="aaaa-mm-dd" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Hasta" /><TextField fx:id="txtPeriodoHasta" promptText="aaaa-mm-dd" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onAgregarPeriodo" text="Agregar periodo" /></HBox>
+                        <ListView fx:id="lstPeriodos" prefHeight="120" />
+                        <HBox spacing="8"><Button onAction="#onEliminarPeriodo" text="Eliminar periodo" /></HBox>
+                        <Label text="POLITICA DE CANCELACION" />
+                        <HBox spacing="8"><Label minWidth="260" text="Dias para devolucion total (mas de)" /><TextField fx:id="txtDias" /></HBox>
+                        <HBox spacing="8"><Label minWidth="260" text="Horas minimas para retencion parcial" /><TextField fx:id="txtHoras" /></HBox>
+                        <HBox spacing="8"><Label minWidth="260" text="Porcentaje retenido en el tramo parcial" /><TextField fx:id="txtPorcentaje" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onGuardarPolitica" text="Guardar politica" /></HBox>
                             </VBox>
                         </content>
                     </ScrollPane>
@@ -83,14 +93,14 @@
                     <ScrollPane fitToWidth="true">
                         <content>
                             <VBox spacing="8">
-                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                                <HBox spacing="8"><Label text="Apartamento" minWidth="170"/><ComboBox fx:id="cmbApartamento"/></HBox>
-                        <HBox spacing="8"><Label text="Desde" minWidth="170"/><TextField fx:id="txtBloqueoDesde" promptText="aaaa-mm-dd"/></HBox>
-                        <HBox spacing="8"><Label text="Hasta" minWidth="170"/><TextField fx:id="txtBloqueoHasta" promptText="aaaa-mm-dd"/></HBox>
-                        <HBox spacing="8"><Label text="Motivo" minWidth="170"/><TextField fx:id="txtBloqueoMotivo"/></HBox>
-                        <HBox spacing="8"><Button text="Registrar bloqueo" onAction="#onBloquear"/></HBox>
-                        <ListView fx:id="lstBloqueos" prefHeight="150"/>
-                        <HBox spacing="8"><Button text="Eliminar bloqueo" onAction="#onEliminarBloqueo"/></HBox>
+                                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                                <HBox spacing="8"><Label minWidth="170" text="Apartamento" /><ComboBox fx:id="cmbApartamento" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Desde" /><TextField fx:id="txtBloqueoDesde" promptText="aaaa-mm-dd" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Hasta" /><TextField fx:id="txtBloqueoHasta" promptText="aaaa-mm-dd" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Motivo" /><TextField fx:id="txtBloqueoMotivo" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onBloquear" text="Registrar bloqueo" /></HBox>
+                        <ListView fx:id="lstBloqueos" prefHeight="150" />
+                        <HBox spacing="8"><Button onAction="#onEliminarBloqueo" text="Eliminar bloqueo" /></HBox>
                             </VBox>
                         </content>
                     </ScrollPane>
@@ -101,11 +111,11 @@
                     <ScrollPane fitToWidth="true">
                         <content>
                             <VBox spacing="8">
-                                <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-                                <HBox spacing="8"><Label text="Desde" minWidth="170"/><TextField fx:id="txtReporteDesde" promptText="aaaa-mm-dd"/></HBox>
-                        <HBox spacing="8"><Label text="Hasta" minWidth="170"/><TextField fx:id="txtReporteHasta" promptText="aaaa-mm-dd"/></HBox>
-                        <HBox spacing="8"><Button text="Ocupacion" onAction="#onReporteOcupacion"/><Button text="Ingresos" onAction="#onReporteIngresos"/><Button text="Reservas por canal" onAction="#onReporteCanales"/><Button text="Saldos pendientes" onAction="#onReporteSaldos"/><Button text="Novedades" onAction="#onReporteNovedades"/></HBox>
-                        <TextArea fx:id="txtReporte" editable="false" prefRowCount="18"/>
+                                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                                <HBox spacing="8"><Label minWidth="170" text="Desde" /><TextField fx:id="txtReporteDesde" promptText="aaaa-mm-dd" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Hasta" /><TextField fx:id="txtReporteHasta" promptText="aaaa-mm-dd" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onReporteOcupacion" text="Ocupacion" /><Button onAction="#onReporteIngresos" text="Ingresos" /><Button onAction="#onReporteCanales" text="Reservas por canal" /><Button onAction="#onReporteSaldos" text="Saldos pendientes" /><Button onAction="#onReporteNovedades" text="Novedades" /></HBox>
+                        <TextArea fx:id="txtReporte" editable="false" prefRowCount="18" />
                             </VBox>
                         </content>
                     </ScrollPane>

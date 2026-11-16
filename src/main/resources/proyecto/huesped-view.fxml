@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="proyecto.viewController.HuespedViewController">
+    <top>
+        <HBox spacing="12" style="-fx-background-color: #dddddd;">
+            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+            <Label fx:id="lblBienvenida" />
+            <Button onAction="#onSalir" prefHeight="25.0" prefWidth="455.0" text="Cerrar sesion" />
+        </HBox>
+    </top>
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+            <Tab text="Buscar y reservar">
+                <content>
+                    <ScrollPane fitToWidth="true">
+                        <content>
+                            <VBox spacing="8">
+                                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                                <HBox spacing="8"><Label minWidth="170" text="Entrada" /><TextField fx:id="txtEntrada" promptText="aaaa-mm-dd" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Salida" /><TextField fx:id="txtSalida" promptText="aaaa-mm-dd" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Personas" /><TextField fx:id="txtPersonas" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onBuscar" text="Buscar disponibles" /></HBox>
+                        <ListView fx:id="lstApartamentos" prefHeight="150" />
+                        <Label text="Acompañantes (usted se incluye automaticamente), uno por línea: Nombre, aaaa-mm-dd" />
+                        <TextArea fx:id="txtAcompanantes" prefRowCount="3" />
+                        <HBox spacing="8"><Button onAction="#onCotizar" text="Cotizar" /><Button onAction="#onReservar" text="Reservar" /></HBox>
+                        <TextArea fx:id="txtCotizacion" editable="false" prefRowCount="10" />
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </content>
+            </Tab>
+            <Tab text="Mis reservas">
+                <content>
+                    <ScrollPane fitToWidth="true">
+                        <content>
+                            <VBox spacing="8">
+                                <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                                <ListView fx:id="lstReservas" prefHeight="180" />
+                        <HBox spacing="8"><Button onAction="#onActualizar" text="Actualizar" /><Button onAction="#onVerFolio" text="Ver folio" /><Button onAction="#onVerCancelacion" text="Ver cuanto me devuelven" /><Button onAction="#onCancelar" text="Cancelar reserva" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Monto a pagar" /><TextField fx:id="txtMonto" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Medio de pago" /><ComboBox fx:id="cmbMedio" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onPagar" text="Pagar anticipo / abonar" /></HBox>
+                        <TextArea fx:id="txtDetalle" editable="false" prefRowCount="10" />
+                            </VBox>
+                        </content>
+                    </ScrollPane>
+                </content>
+            </Tab>
+            <Tab text="Mi perfil">
+                <content>
+                    <VBox spacing="8">
+                        <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                        <HBox spacing="8"><Label minWidth="170" text="Nombre" /><TextField fx:id="txtPerfilNombre" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Telefono" /><TextField fx:id="txtPerfilTelefono" /></HBox>
+                        <HBox spacing="8"><Label minWidth="170" text="Correo" /><TextField fx:id="txtPerfilCorreo" /></HBox>
+                        <HBox spacing="8"><Button onAction="#onGuardarPerfil" prefHeight="25.0" prefWidth="480.0" text="Guardar perfil" /></HBox>
+                    </VBox>
+                </content>
+            </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+</BorderPane>
