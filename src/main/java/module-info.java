@@ -6,4 +6,7 @@ module proyecto {
     exports proyecto;
     exports proyecto.model;
     exports proyecto.exception;
+
+    opens proyecto.viewController to javafx.fxml;
+    exports proyecto.viewController;
 }

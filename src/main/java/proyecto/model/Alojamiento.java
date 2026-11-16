@@ -517,7 +517,7 @@ public class Alojamiento {
             }
             double porcentaje = 100.0 * ocupadas / nochesPeriodo;
             texto += apartamento.getCodigo() + " " + apartamento.getNombre() + ": " + ocupadas + " de " + nochesPeriodo
-                    + " noches (" + String.format("%.1f", porcentaje) + "%)\n";
+                    + " noches (" + String.format(java.util.Locale.US, "%.1f", porcentaje) + "%)\n";
         }
         return texto;
     }
