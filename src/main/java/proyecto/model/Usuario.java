@@ -55,6 +55,10 @@ public abstract class Usuario {
         return clave.equals(intento);
     }
 
+    public String getClave() {
+        return clave;
+    }
+
     public String toString() {
         return nombre + " (" + documento + ")";
     }

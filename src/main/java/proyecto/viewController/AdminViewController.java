@@ -53,6 +53,9 @@ public class AdminViewController {
     @FXML private TextField txtReporteHasta;
     @FXML private TextArea txtReporte;
 
+    // Huespedes
+    @FXML private ListView<String> lstHuespedes;
+
     private Alojamiento modelo = SgaApplication.getModelo();
 
     @FXML
@@ -83,6 +86,7 @@ public class AdminViewController {
         txtDias.setText("" + modelo.getPoliticaDias());
         txtHoras.setText("" + modelo.getPoliticaHoras());
         txtPorcentaje.setText("" + modelo.getPoliticaPorcentaje());
+        actualizarHuespedes();
     }
 
     // Recepcionistas
@@ -237,6 +241,13 @@ public class AdminViewController {
         if (bloq != null) {
             modelo.eliminarBloqueo(bloq);
             actualizarTodo();
+        }
+    }
+
+    private void actualizarHuespedes() {
+        lstHuespedes.getItems().clear();
+        for (Huesped h : modelo.getHuespedes()) {
+            lstHuespedes.getItems().add(Util.datosHuesped(h));
         }
     }
 

@@ -83,13 +83,39 @@ public class Alojamiento {
         return false;
     }
 
+    private void validarNumerico(String valor, String campo, int min, int max) throws PadreException {
+        if (valor == null || !valor.trim().matches("\\d{" + min + "," + max + "}")) {
+            throw new DatoInvalidoException("El " + campo + " debe tener solo números (entre " + min + " y " + max + " dígitos).");
+        }
+    }
+
+    private void validarNacimiento(LocalDate nacimiento) throws PadreException {
+        if (nacimiento == null) {
+            throw new DatoInvalidoException("La fecha de nacimiento es obligatoria.");
+        }
+        if (nacimiento.isAfter(LocalDate.now())) {
+            throw new DatoInvalidoException("La fecha de nacimiento no puede ser posterior a hoy.");
+        }
+    }
+
     public Huesped registrarHuesped(String nombre, String documento, LocalDate nacimiento, String telefono, String correo, String usuario, String clave) throws PadreException {
-        Huesped nuevo = new Huesped(nombre, documento, nacimiento, telefono, correo, usuario, clave);
+        validarNumerico(documento, "documento", 5, 12);
+        validarNumerico(telefono, "teléfono", 7, 10);
+        validarNacimiento(nacimiento);
+        // El titular es el responsable de la reserva y del pago: debe ser mayor de edad
+        if (Period.between(nacimiento, LocalDate.now()).getYears() < 18) {
+            throw new ReglaNegocioException("El huésped debe ser mayor de edad (18 años) para registrarse y reservar.");
+        }
+        Huesped nuevo = new Huesped(nombre, documento, nacimiento, telefono.trim(), correo, usuario, clave);
         if (usuarioOcupado(nuevo.getUsuario(), nuevo.getDocumento())) {
             throw new DuplicadoException("Ya existe alguien con ese usuario o ese documento.");
         }
         huespedes.add(nuevo);
         return nuevo;
+    }
+
+    public ArrayList<Huesped> getHuespedes() {
+        return new ArrayList<Huesped>(huespedes);
     }
 
     public Huesped buscarHuesped(String documento) throws PadreException {
@@ -101,8 +127,22 @@ public class Alojamiento {
         throw new NoEncontradoException("No existe un huésped con documento " + documento + ".");
     }
 
+    // Validaciones de los datos de contacto del recepcionista
+    private void validarDatosRecepcionista(String documento, String telefono, String correo) throws PadreException {
+        if (documento != null && !documento.trim().matches("\\d{5,10}")) {
+            throw new DatoInvalidoException("El documento debe tener solo números, entre 5 y 10 dígitos.");
+        }
+        if (telefono == null || !telefono.trim().matches("\\d{7,10}")) {
+            throw new DatoInvalidoException("El teléfono debe tener solo números, entre 7 y 10 dígitos.");
+        }
+        if (correo == null || correo.trim().indexOf('@') < 1 || correo.trim().indexOf('@') == correo.trim().length() - 1) {
+            throw new DatoInvalidoException("El correo no es válido: debe contener '@' con texto antes y después.");
+        }
+    }
+
     public Recepcionista contratarRecepcionista(String nombre, String documento, String telefono, String correo, String usuario, String clave) throws PadreException {
-        Recepcionista nuevo = new Recepcionista(nombre, documento, telefono, correo, usuario, clave);
+        validarDatosRecepcionista(documento, telefono, correo);
+        Recepcionista nuevo = new Recepcionista(nombre, documento, telefono.trim(), correo.trim(), usuario, clave);
         if (usuarioOcupado(nuevo.getUsuario(), nuevo.getDocumento())) {
             throw new DuplicadoException("Ya existe alguien con ese usuario o ese documento.");
         }
@@ -167,8 +207,13 @@ public class Alojamiento {
     }
 
     // Temporadas, politica y bloqueos
-
     public void agregarPeriodo(Temporada temporada, LocalDate desde, LocalDate hasta) throws PadreException {
+        if (desde == null || hasta == null) {
+            throw new DatoInvalidoException("Debe indicar la fecha inicial y la final.");
+        }
+        if (desde.isBefore(LocalDate.now())) {
+            throw new DatoInvalidoException("La temporada debe empezar hoy o en una fecha futura.");
+        }
         periodos.add(new PeriodoTemporada(temporada, desde, hasta));
     }
 
@@ -218,6 +263,9 @@ public class Alojamiento {
 
     public void registrarBloqueo(Apartamento apto, LocalDate desde, LocalDate hasta, String motivo) throws PadreException {
         Bloqueo nuevo = new Bloqueo(apto, desde, hasta, motivo);
+        if (desde == null || desde.isBefore(LocalDate.now())) {
+            throw new DatoInvalidoException("El bloqueo debe empezar hoy o en una fecha futura.");
+        }
         for (Reserva reserva : reservas) {
             if (reserva.getApartamento() == apto && reserva.estaActiva() && nuevo.chocaCon(reserva.getEntrada(), reserva.getSalida())) {
                 throw new ReglaNegocioException("El bloqueo choca con la reserva activa " + reserva.getCodigo() + ".");
@@ -374,11 +422,16 @@ public class Alojamiento {
     // Perfiles y empleados
 
     public void editarPerfil(Huesped huesped, String nombre, String telefono, String correo) throws PadreException {
-        huesped.editarDatos(nombre, telefono, correo);
+        validarNumerico(telefono, "teléfono", 7, 10);
+        huesped.editarDatos(nombre, telefono.trim(), correo);
     }
 
     public void editarRecepcionista(Recepcionista r, String nombre, String telefono, String correo) throws PadreException {
-        r.editarDatos(nombre, telefono, correo);
+        if (!r.isActivo()) {
+            throw new ReglaNegocioException("Un recepcionista desvinculado no se puede modificar.");
+        }
+        validarDatosRecepcionista(null, telefono, correo);
+        r.editarDatos(nombre, telefono.trim(), correo.trim());
     }
 
     public void desvincularRecepcionista(Recepcionista r) throws PadreException {
@@ -411,6 +464,10 @@ public class Alojamiento {
     }
 
     public void registrarSalida(Reserva reserva, LocalDateTime ahora) throws PadreException {
+        if (reserva.getEstado() == EstadoReserva.EN_CURSO && reserva.getFolio().saldo() > 0) {
+            throw new ReglaNegocioException("No se puede hacer el check-out: la reserva tiene un saldo pendiente de "
+                    + Formato.dinero(reserva.getFolio().saldo()) + ". Debe pagarse completo antes de la salida.");
+        }
         reserva.registrarSalida(ahora);
     }
 
@@ -470,6 +527,14 @@ public class Alojamiento {
     // Pago o abono, si es del Portal y ya cubre el anticipo, la reserva se confirma sola.
     public void registrarPago(Reserva reserva, long monto, MedioPago medio, LocalDateTime ahora) throws PadreException {
         liberarVencidas(ahora);
+        EstadoReserva estado = reserva.getEstado();
+        if (estado == EstadoReserva.FINALIZADA) {
+            throw new ReglaNegocioException("La reserva está FINALIZADA y no admite más pagos.");
+        }
+        // Cancelada o no-show: solo se puede pagar la penalidad que haya quedado pendiente
+        if ((estado == EstadoReserva.CANCELADA || estado == EstadoReserva.NO_SHOW) && reserva.getFolio().saldo() <= 0) {
+            throw new ReglaNegocioException("La reserva está " + estado + " y no tiene saldo pendiente: no admite pagos.");
+        }
         if (monto > reserva.getFolio().saldo()) {
             throw new ReglaNegocioException("El pago supera el saldo pendiente (" + Formato.dinero(reserva.getFolio().saldo()) + ").");
         }

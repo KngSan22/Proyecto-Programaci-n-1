@@ -13,7 +13,7 @@ public class RecepcionViewController {
 
     @FXML private Label lblBienvenida;
 
-    // Pestana reservas
+    // Reservas
     @FXML private ListView<Reserva> lstReservas;
     @FXML private TextField txtMonto;
     @FXML private ComboBox<MedioPago> cmbMedio;
@@ -23,7 +23,7 @@ public class RecepcionViewController {
     @FXML private TextField txtMotivoCorreccion;
     @FXML private TextArea txtDetalle;
 
-    // Pestana nueva reserva
+    // Nueva Reserva
     @FXML private TextField txtDocumentoTitular;
     @FXML private ComboBox<Apartamento> cmbApartamento;
     @FXML private TextField txtEntrada;
@@ -38,13 +38,16 @@ public class RecepcionViewController {
     @FXML private TextField txtUsuario;
     @FXML private PasswordField txtClave;
 
-    // Pestana apartamentos
+    // Apartamentos
     @FXML private ListView<Apartamento> lstApartamentos;
     @FXML private ComboBox<EstadoApartamento> cmbEstado;
     @FXML private TextField txtMotivo;
     @FXML private TextField txtNovedad;
     @FXML private ListView<String> lstNovedades;
     @FXML private ListView<String> lstConflictos;
+
+    // Huespedes
+    @FXML private ListView<String> lstHuespedes;
 
     private Alojamiento modelo = SgaApplication.getModelo();
 
@@ -85,6 +88,7 @@ public class RecepcionViewController {
                 lstNovedades.getItems().add(novedad.toString());
             }
             lstConflictos.getItems().setAll(modelo.getConflictos());
+            actualizarHuespedes();
         } catch (Exception ex) {
             Util.error(ex);
         }
@@ -289,6 +293,12 @@ public class RecepcionViewController {
             onActualizar();
         } catch (Exception ex) {
             Util.error(ex);
+        }
+    }
+    private void actualizarHuespedes() {
+        lstHuespedes.getItems().clear();
+        for (Huesped h : modelo.getHuespedes()) {
+            lstHuespedes.getItems().add(Util.datosHuesped(h));
         }
     }
 }

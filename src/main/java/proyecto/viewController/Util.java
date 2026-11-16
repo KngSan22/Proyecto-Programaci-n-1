@@ -40,7 +40,11 @@ public class Util {
             if (partes.length != 2) {
                 throw new DatoInvalidoException("Cada acompañante debe escribirse asi: Nombre, aaaa-mm-dd");
             }
-            lista.add(new Ocupante(partes[0], fecha(partes[1])));
+            LocalDate nacimiento = fecha(partes[1]);
+            if (nacimiento.isAfter(LocalDate.now())) {
+                throw new DatoInvalidoException("El acompañante '" + partes[0].trim() + "' no puede haber nacido después de hoy.");
+            }
+            lista.add(new Ocupante(partes[0], nacimiento));
         }
         return lista;
     }
@@ -69,5 +73,9 @@ public class Util {
         alerta.setHeaderText(null);
         alerta.setContentText(texto);
         return alerta.showAndWait().get() == ButtonType.OK;
+    }
+
+    public static String datosHuesped(Huesped h) {
+        return h.getNombre() + " | Documento: " + h.getDocumento() + " | Usuario: " + h.getUsuario() + " | Contraseña: " + h.getClave();
     }
 }

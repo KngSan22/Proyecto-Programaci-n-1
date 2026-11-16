@@ -1,6 +1,6 @@
 package proyecto.model;
 
-import proyecto.exception.PadreException;
+import proyecto.exception.*;
 public class Recepcionista extends Usuario {
 
     private String telefono;
@@ -26,6 +26,9 @@ public class Recepcionista extends Usuario {
     }
 
     public void editarDatos(String nombre, String telefono, String correo) throws PadreException {
+        if (!activo) {
+            throw new ReglaNegocioException("Un recepcionista desvinculado no se puede modificar.");
+        }
         setNombre(nombre);
         this.telefono = telefono;
         this.correo = correo;

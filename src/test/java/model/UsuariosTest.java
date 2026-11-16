@@ -52,7 +52,7 @@ class UsuariosTest {
 
     @Test
     void noSePuedeRepetirUsuarioNiDocumento() throws Exception {
-        assertThrows(PadreException.class, () -> aloj.registrarHuesped("Otro", "999", LocalDate.of(2000, 1, 1), "3050545555", "otro@gmail.com", "carlos", "clave123"));
+        assertThrows(PadreException.class, () -> aloj.registrarHuesped("Otro", "99999", LocalDate.of(2000, 1, 1), "3050545555", "otro@gmail.com", "carlos", "clave123"));
         assertThrows(PadreException.class, () -> aloj.registrarHuesped("Otro", "1049258249", LocalDate.of(2000, 1, 1), "3050545555", "otro@gmail.com", "otro", "clave123"));
     }
 

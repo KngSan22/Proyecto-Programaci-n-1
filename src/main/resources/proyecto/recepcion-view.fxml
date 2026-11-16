@@ -89,6 +89,18 @@
                     </ScrollPane>
                 </content>
             </Tab>
+                <Tab text="Huespedes">
+                    <content>
+                        <ScrollPane fitToWidth="true">
+                            <content>
+                                <VBox spacing="8">
+                                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                                    <ListView fx:id="lstHuespedes" prefHeight="400" />
+                                </VBox>
+                            </content>
+                        </ScrollPane>
+                    </content>
+                </Tab>
             </tabs>
         </TabPane>
     </center>
