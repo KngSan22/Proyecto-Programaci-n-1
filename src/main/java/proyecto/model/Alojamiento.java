@@ -309,7 +309,7 @@ public class Alojamiento {
         validarFechas(entrada, salida);
         ArrayList<Apartamento> libres = new ArrayList<Apartamento>();
         for (Apartamento apartamento : getApartamentos()) {
-            if (apartamento.getCapacidad() >= personas && motivoNoDisponible(apartamento, entrada, salida) == null) {
+            if (apartamento.getEstado() != EstadoApartamento.FUERA_DE_SERVICIO && apartamento.getCapacidad() >= personas && motivoNoDisponible(apartamento, entrada, salida) == null) {
                 libres.add(apartamento);
             }
         }
@@ -351,6 +351,11 @@ public class Alojamiento {
         validarFechas(entrada, salida);
         if (entrada.isBefore(LocalDate.now())) {
             throw new ReglaNegocioException("No se pueden crear reservas con fecha de entrada anterior a hoy.");
+        }
+        // Un apartamento fuera de servicio no se vende; para cerrar fechas concretas se usan los bloqueos
+        if (apto.getEstado() == EstadoApartamento.FUERA_DE_SERVICIO) {
+            throw new ReglaNegocioException("El apartamento " + apto.getCodigo() + " esta fuera de servicio ("
+                    + apto.getMotivoFueraDeServicio() + ") y no se puede reservar.");
         }
         // El titular también se aloja, es el primer ocupante
         todos.add(new Ocupante(titular.getNombre(), titular.getFechaNacimiento()));
