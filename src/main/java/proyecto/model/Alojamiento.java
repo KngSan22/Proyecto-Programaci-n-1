@@ -28,7 +28,7 @@ public class Alojamiento {
     // Datos de ejemplo
     public void cargarDatosDeEjemplo() throws PadreException {
         administradores.add(new Administrador("Administrador General", "1049359485", "admin", "admin123"));
-        recepcionistas.add(new Recepcionista("Laura Cardona", "1058230540", "3115104920", "laura@correo.com", "recepcion", "recep123"));
+        recepcionistas.add(new Recepcionista("Laura Cardona", "1058230540", "3115104920", "laura@hotmail.com", "recepcion", "recep123"));
         huespedes.add(new Huesped("Carlos Cuartas", "1049258249", LocalDate.of(1990, 8, 14), "3127229553", "carlos@gmail.com", "carlos", "carlos123"));
         apartamentos.add(new Apartamento("AP-101", "Cafetal", 2, 4, "Balcon y jacuzzi", 90000, 110000, 140000));
         apartamentos.add(new Apartamento("AP-102", "Palma de Cera", 1, 2, "Balcon, jacuzzi y chimenea", 110000, 130000, 170000));
@@ -99,7 +99,7 @@ public class Alojamiento {
     }
 
     public Huesped registrarHuesped(String nombre, String documento, LocalDate nacimiento, String telefono, String correo, String usuario, String clave) throws PadreException {
-        validarNumerico(documento, "documento", 5, 12);
+        validarNumerico(documento, "documento", 5, 10);
         validarNumerico(telefono, "teléfono", 7, 10);
         validarNacimiento(nacimiento);
         // El titular es el responsable de la reserva y del pago: debe ser mayor de edad
